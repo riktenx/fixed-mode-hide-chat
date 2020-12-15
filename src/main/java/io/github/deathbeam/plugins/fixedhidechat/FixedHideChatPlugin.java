@@ -179,7 +179,7 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 
 	private void setWidgetsSizeTo(final int originalHeight, final int newHeight)
 	{
-		final Widget viewport = client.getViewportWidget();
+		final Widget viewport = client.getWidget(WidgetInfo.FIXED_VIEWPORT);
 
 		if (viewport != null)
 		{
