@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.events.BeforeRender;
+import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
@@ -81,6 +82,23 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 	public void keyReleased(KeyEvent e)
 	{
 
+	}
+
+	@Subscribe
+	public void onClientTick(final ClientTick event) {
+		if (client.isResized())
+		{
+			return;
+		}
+
+		// Bank container sometimes moves offscreen on resize and quick inputs, workaround
+		final Widget widget = client.getWidget(WidgetInfo.BANK_CONTAINER);
+
+		if (widget != null && !widget.isSelfHidden())
+		{
+			widget.setRelativeX(12);
+			widget.setRelativeY(2);
+		}
 	}
 
 	@Subscribe
@@ -183,13 +201,6 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 
 	private void setWidgetsSizeTo(final int originalHeight, final int newHeight)
 	{
-		final Widget viewport = client.getWidget(WidgetInfo.FIXED_VIEWPORT);
-
-		if (viewport != null)
-		{
-			viewport.setHeight(newHeight);
-		}
-
 		for (final Map.Entry<Integer, Integer> widgetInfo : TO_CONTRACT_WIDGETS)
 		{
 			final Widget widget = client.getWidget(widgetInfo.getKey(), widgetInfo.getValue());
@@ -203,6 +214,13 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 
 	private void setViewSizeTo(final int originalHeight, final int newHeight)
 	{
+		final Widget viewport = client.getWidget(WidgetInfo.FIXED_VIEWPORT);
+
+		if (viewport != null)
+		{
+			viewport.setHeight(newHeight);
+		}
+
 		final Widget fixedMain = client.getWidget(FIXED_MAIN.getKey(), FIXED_MAIN.getValue());
 
 		if (fixedMain != null && fixedMain.getHeight() == originalHeight)

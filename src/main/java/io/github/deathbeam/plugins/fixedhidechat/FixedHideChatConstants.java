@@ -4,14 +4,21 @@ import com.google.common.collect.ImmutableSet;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Set;
+import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetID;
 import net.runelite.api.widgets.WidgetInfo;
 
 public class FixedHideChatConstants
 {
 	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_DIALOG = new AbstractMap.SimpleEntry<>(
+		WidgetInfo.DIALOG_OPTION.getGroupId(),
+		WidgetInfo.DIALOG_OPTION.getChildId()
+	);
+
+	// Wrong PIN popup, idk what else
+	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_SPECIAL = new AbstractMap.SimpleEntry<>(
 		WidgetID.CHATBOX_GROUP_ID,
-		562
+		559
 	);
 
 	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_DIALOG_NPC = new AbstractMap.SimpleEntry<>(
@@ -60,6 +67,7 @@ public class FixedHideChatConstants
 	static final Set<Map.Entry<Integer, Integer>> AUTO_EXPAND_WIDGETS = ImmutableSet
 		.<Map.Entry<Integer, Integer>>builder()
 		.add(CHATBOX_MESSAGES_DIALOG)
+		.add(CHATBOX_MESSAGES_SPECIAL)
 		.add(CHATBOX_MESSAGES_CONTAINER)
 		.add(CHATBOX_MESSAGES_DIALOG_NPC)
 		.add(CHATBOX_MESSAGES_DIALOG_PLAYER)
