@@ -65,23 +65,23 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 	@Override
 	public void keyTyped(KeyEvent e)
 	{
-
+		keyReleased(e);
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e)
+	{
+		keyReleased(e);
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e)
 	{
 		if (!client.isResized() && e.getKeyCode() == KeyEvent.VK_ESCAPE && !hideChat)
 		{
 			hideChat = true;
 			e.consume();
 		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e)
-	{
-
 	}
 
 	@Subscribe
@@ -109,11 +109,8 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 			return;
 		}
 
-		if (hideChat)
-		{
-			// Expand the view height
-			setViewSizeTo(DEFAULT_VIEW_HEIGHT, EXPANDED_VIEW_HEIGHT);
-		}
+		// Expand the view height
+		setViewSizeTo(DEFAULT_VIEW_HEIGHT, EXPANDED_VIEW_HEIGHT);
 
 		final Widget chatboxMessages = client.getWidget(WidgetInfo.CHATBOX);
 
