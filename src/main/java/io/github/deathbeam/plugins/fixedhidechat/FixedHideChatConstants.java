@@ -58,7 +58,7 @@ public class FixedHideChatConstants
 
 	static final Map.Entry<Integer, Integer>  FIXED_MAIN = new AbstractMap.SimpleEntry<>(
 		WidgetID.FIXED_VIEWPORT_GROUP_ID,
-		12
+		9
 	);
 
 	static final int DEFAULT_VIEW_HEIGHT = 334;
