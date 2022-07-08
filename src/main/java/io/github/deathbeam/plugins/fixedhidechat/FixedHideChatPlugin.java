@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.events.BeforeRender;
-import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
@@ -85,7 +84,8 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 	}
 
 	@Subscribe
-	public void onClientTick(final ClientTick event) {
+	public void onBeforeRender(final BeforeRender event)
+	{
 		if (client.isResized())
 		{
 			return;
@@ -98,15 +98,6 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 		{
 			widget.setRelativeX(12);
 			widget.setRelativeY(2);
-		}
-	}
-
-	@Subscribe
-	public void onBeforeRender(final BeforeRender event)
-	{
-		if (client.isResized())
-		{
-			return;
 		}
 
 		// Expand the view height
