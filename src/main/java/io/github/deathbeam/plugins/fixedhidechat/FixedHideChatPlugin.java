@@ -92,12 +92,12 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 		}
 
 		// Bank container sometimes moves offscreen on resize and quick inputs, workaround
-		final Widget widget = client.getWidget(WidgetInfo.BANK_CONTAINER);
+		final Widget bankWidget = client.getWidget(WidgetInfo.BANK_CONTAINER);
 
-		if (widget != null && !widget.isSelfHidden())
+		if (bankWidget != null && !bankWidget.isSelfHidden())
 		{
-			widget.setRelativeX(12);
-			widget.setRelativeY(2);
+			bankWidget.setRelativeX(12);
+			bankWidget.setRelativeY(2);
 		}
 
 		// Expand the view height
