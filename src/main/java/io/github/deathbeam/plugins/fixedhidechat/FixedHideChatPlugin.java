@@ -3,10 +3,13 @@ package io.github.deathbeam.plugins.fixedhidechat;
 import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.AUTO_EXPAND_WIDGETS;
 import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.DEFAULT_VIEW_HEIGHT;
 import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.EXPANDED_VIEW_HEIGHT;
+import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.BANK_Y;
+import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.DEFAULT_VIEW_WIDGET_HEIGHT;
+import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.EXPANDED_VIEW_WIDGET_HEIGHT;
 import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.FIXED_MAIN;
 import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.TO_CONTRACT_WIDGETS;
 import java.awt.event.KeyEvent;
-import java.util.Map;
+import java.util.*;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -95,8 +98,17 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 
 		if (bankWidget != null && !bankWidget.isSelfHidden())
 		{
-			bankWidget.setRelativeX(12);
-			bankWidget.setRelativeY(2);
+			// If changeBankProperties is not called before the script and the chatbox is open, then a tag tab briefly shows over the 'swap' button
+			changeBankProperties(bankWidget);
+			// call [clientscript,bankmain_init] because otherwise the tag tabs don't extend properly
+			Widget w = client.getWidget(ComponentID.BANK_CONTAINER);
+			if (w != null)
+			{
+				client.createScriptEvent(w.getOnLoadListener())
+						.setSource(w)
+						.run();
+			}
+			changeBankProperties(bankWidget);
 		}
 
 		// Expand the view height
@@ -113,7 +125,7 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 			{
 				for (final Map.Entry<Integer, Integer> widgets : AUTO_EXPAND_WIDGETS)
 				{
-					final Widget widget = client.getWidget(widgets.getKey(), widgets.getValue());
+					final Widget widget = widgets.getValue() == 0 ? client.getWidget(widgets.getKey()) : client.getWidget(widgets.getKey(), widgets.getValue());
 
 					if (widget != null && !widget.isSelfHidden())
 					{
@@ -125,8 +137,8 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 
 			// Resize some widgets that might interfere with having expanded chat
 			setWidgetsSizeTo(
-				found ? EXPANDED_VIEW_HEIGHT : DEFAULT_VIEW_HEIGHT,
-				found ? DEFAULT_VIEW_HEIGHT : EXPANDED_VIEW_HEIGHT);
+				found ? EXPANDED_VIEW_WIDGET_HEIGHT : DEFAULT_VIEW_WIDGET_HEIGHT,
+				found ? DEFAULT_VIEW_WIDGET_HEIGHT : EXPANDED_VIEW_WIDGET_HEIGHT);
 
 			// Hide/show chat messages
 			chatboxMessages.setHidden(!found);
@@ -142,7 +154,7 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 		}
 
 		final Widget chatboxMessages = client.getWidget(ComponentID.CHATBOX_FRAME);
-		final int newMenu = event.getWidgetId();
+		final int newMenu = event.getParam1(); // Param1 is the same as getWidget().getId()
 		hideChat = true;
 
 		if (newMenu != lastMenu || (chatboxMessages != null && chatboxMessages.isHidden()))
@@ -152,11 +164,21 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 		}
 	}
 
+	private void changeBankProperties(Widget bankWidget) {
+		bankWidget.setOriginalX(12);
+		bankWidget.setOriginalY(BANK_Y);
+		bankWidget.setXPositionMode(WidgetPositionMode.ABSOLUTE_LEFT);
+		bankWidget.setYPositionMode(WidgetPositionMode.ABSOLUTE_TOP);
+		bankWidget.revalidateScroll();
+	}
+
 	private static void changeWidgetHeight(int originalHeight, int newHeight, Widget widget)
 	{
 		if (widget.getHeight() == originalHeight)
 		{
-			widget.setHeight(newHeight);
+			widget.setOriginalHeight(newHeight);
+			widget.setHeightMode(WidgetSizeMode.ABSOLUTE);
+			widget.revalidateScroll();
 
 			final Widget[] nestedChildren = widget.getNestedChildren();
 
@@ -166,7 +188,9 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 				{
 					if (nestedChild.getHeight() == originalHeight)
 					{
-						nestedChild.setHeight(newHeight);
+						nestedChild.setOriginalHeight(newHeight);
+						nestedChild.setHeightMode(WidgetSizeMode.ABSOLUTE);
+						nestedChild.revalidateScroll();
 					}
 				}
 			}
@@ -179,7 +203,9 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 				{
 					if (child.getHeight() == originalHeight)
 					{
-						child.setHeight(newHeight);
+						child.setOriginalHeight(newHeight);
+						child.setHeightMode(WidgetSizeMode.ABSOLUTE);
+						child.revalidateScroll();
 					}
 				}
 			}
@@ -190,8 +216,7 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 	{
 		for (final Map.Entry<Integer, Integer> widgets : TO_CONTRACT_WIDGETS)
 		{
-			final Widget widget = client.getWidget(widgets.getKey(), widgets.getValue());
-
+			final Widget widget = widgets.getValue() == 0 ? client.getWidget(widgets.getKey()) : client.getWidget(widgets.getKey(), widgets.getValue());
 			if (widget != null && !widget.isSelfHidden())
 			{
 				changeWidgetHeight(originalHeight, newHeight, widget);
@@ -205,14 +230,18 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 
 		if (viewport != null)
 		{
-			viewport.setHeight(newHeight);
+			viewport.setOriginalHeight(newHeight);
+			viewport.setHeightMode(WidgetSizeMode.ABSOLUTE);
+			viewport.revalidateScroll();
 		}
 
 		final Widget fixedMain = client.getWidget(FIXED_MAIN.getKey(), FIXED_MAIN.getValue());
 
 		if (fixedMain != null && fixedMain.getHeight() == originalHeight)
 		{
-			fixedMain.setHeight(newHeight);
+			fixedMain.setOriginalHeight(newHeight);
+			fixedMain.setHeightMode(WidgetSizeMode.ABSOLUTE);
+			fixedMain.revalidateScroll();
 
 			final Widget[] staticChildren = fixedMain.getStaticChildren();
 
@@ -234,7 +263,7 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 
 		// Contract the view if it is expanded
 		setViewSizeTo(EXPANDED_VIEW_HEIGHT, DEFAULT_VIEW_HEIGHT);
-		setWidgetsSizeTo(EXPANDED_VIEW_HEIGHT, DEFAULT_VIEW_HEIGHT);
+		setWidgetsSizeTo(EXPANDED_VIEW_WIDGET_HEIGHT, DEFAULT_VIEW_WIDGET_HEIGHT);
 
 		// Show the chat messages widget again
 		final Widget chatboxMessages = client.getWidget(ComponentID.CHATBOX_FRAME);

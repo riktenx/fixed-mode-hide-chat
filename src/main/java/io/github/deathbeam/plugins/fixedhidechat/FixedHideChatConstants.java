@@ -45,16 +45,6 @@ public class FixedHideChatConstants
 		0
 	);
 
-	private static final Map.Entry<Integer, Integer>  THEATRE_OF_BLOOD_DARK_OVERLAY_PARENT = new AbstractMap.SimpleEntry<>(
-		28,
-		0
-	);
-
-	private static final Map.Entry<Integer, Integer>  THEATRE_OF_BLOOD_DARK_OVERLAY_BODY = new AbstractMap.SimpleEntry<>(
-		28,
-		1
-	);
-
 	static final Map.Entry<Integer, Integer>  FIXED_MAIN = new AbstractMap.SimpleEntry<>(
 		InterfaceID.FIXED_VIEWPORT,
 		9
@@ -62,6 +52,11 @@ public class FixedHideChatConstants
 
 	static final int DEFAULT_VIEW_HEIGHT = 334;
 	static final int EXPANDED_VIEW_HEIGHT = 476;
+	static final int BANK_X = 12;
+	static final int BANK_Y = 2;
+	// This is the VIEW_HEIGHT minus the BANK_Y minus 1 since there is a gap of 1 pixel at the bottom without the plugin.
+	static final int DEFAULT_VIEW_WIDGET_HEIGHT = DEFAULT_VIEW_HEIGHT - BANK_Y - 1;
+	static final int EXPANDED_VIEW_WIDGET_HEIGHT = EXPANDED_VIEW_HEIGHT - BANK_Y - 1;
 
 	static final Set<Map.Entry<Integer, Integer>> AUTO_EXPAND_WIDGETS = ImmutableSet
 		.<Map.Entry<Integer, Integer>>builder()
@@ -76,7 +71,5 @@ public class FixedHideChatConstants
 	static final Set<Map.Entry<Integer, Integer>> TO_CONTRACT_WIDGETS = ImmutableSet
 		.<Map.Entry<Integer, Integer>>builder()
 		.add(FIXED_VIEWPORT_BANK_POPUP_CONTAINER)
-		.add(THEATRE_OF_BLOOD_DARK_OVERLAY_PARENT)
-		.add(THEATRE_OF_BLOOD_DARK_OVERLAY_BODY)
 		.build();
 }
