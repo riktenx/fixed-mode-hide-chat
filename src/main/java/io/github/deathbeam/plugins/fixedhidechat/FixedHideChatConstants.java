@@ -4,45 +4,44 @@ import com.google.common.collect.ImmutableSet;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Set;
-import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetID;
-import net.runelite.api.widgets.WidgetInfo;
+
+import net.runelite.api.widgets.*;
 
 public class FixedHideChatConstants
 {
 	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_DIALOG = new AbstractMap.SimpleEntry<>(
-		WidgetInfo.DIALOG_OPTION.getGroupId(),
-		WidgetInfo.DIALOG_OPTION.getChildId()
+		InterfaceID.DIALOG_OPTION,
+		0
 	);
 
-	// Wrong PIN popup, idk what else
+	// Wrong PIN popup, idk what else; S162.565 (ID: 10617397)
 	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_SPECIAL = new AbstractMap.SimpleEntry<>(
-		WidgetID.CHATBOX_GROUP_ID,
-		559
+		InterfaceID.CHATBOX,
+		565
 	);
 
 	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_DIALOG_NPC = new AbstractMap.SimpleEntry<>(
-		WidgetID.DIALOG_NPC_GROUP_ID,
+		InterfaceID.DIALOG_NPC,
 		0
 	);
 
 	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_DIALOG_PLAYER = new AbstractMap.SimpleEntry<>(
-		WidgetInfo.DIALOG_PLAYER.getGroupId(),
-		WidgetInfo.DIALOG_PLAYER.getChildId()
+		InterfaceID.DIALOG_PLAYER,
+		0
 	);
 
 	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_DIALOG_SPRITE = new AbstractMap.SimpleEntry<>(
-		WidgetInfo.DIALOG_SPRITE.getGroupId(),
-		WidgetInfo.DIALOG_SPRITE.getChildId()
+		InterfaceID.DIALOG_SPRITE,
+		0
 	);
 
 	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_CONTAINER = new AbstractMap.SimpleEntry<>(
-		WidgetInfo.CHATBOX_CONTAINER.getGroupId(),
-		WidgetInfo.CHATBOX_CONTAINER.getChildId()
+		ComponentID.CHATBOX_CONTAINER,
+		0
 	);
 
 	private static final Map.Entry<Integer, Integer>  FIXED_VIEWPORT_BANK_POPUP_CONTAINER = new AbstractMap.SimpleEntry<>(
-		WidgetInfo.BANK_CONTAINER.getGroupId(),
+		ComponentID.BANK_CONTAINER,
 		0
 	);
 
@@ -57,7 +56,7 @@ public class FixedHideChatConstants
 	);
 
 	static final Map.Entry<Integer, Integer>  FIXED_MAIN = new AbstractMap.SimpleEntry<>(
-		WidgetID.FIXED_VIEWPORT_GROUP_ID,
+		InterfaceID.FIXED_VIEWPORT,
 		9
 	);
 
