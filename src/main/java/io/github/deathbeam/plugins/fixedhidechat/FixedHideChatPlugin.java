@@ -108,14 +108,14 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 						.setSource(bankWidget)
 						.run();
 			}
-			changeBankProperties(bankWidget, BANK_X);
+			changeWidgetXY(bankWidget, BANK_X);
 		}
 
 		// The seed vault container sometimes moves offscreen on resize and quick inputs, workaround
 		final Widget seedVaultWidget = client.getWidget(ComponentID.SEED_VAULT_INVENTORY_ITEM_CONTAINER);
 		if (seedVaultWidget != null && !seedVaultWidget.isSelfHidden())
 		{
-			changeBankProperties(seedVaultWidget, 6);
+			changeWidgetXY(seedVaultWidget, 6);
 		}
 
 		// Expand the view height
@@ -173,13 +173,13 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 		}
 	}
 
-	private void changeBankProperties(Widget bankWidget, int xPosition)
+	private void changeWidgetXY(Widget widget, int xPosition)
 	{
-		bankWidget.setOriginalX(xPosition);
-		bankWidget.setOriginalY(BANK_Y);
-		bankWidget.setXPositionMode(WidgetPositionMode.ABSOLUTE_LEFT);
-		bankWidget.setYPositionMode(WidgetPositionMode.ABSOLUTE_TOP);
-		bankWidget.revalidateScroll();
+		widget.setOriginalX(xPosition);
+		widget.setOriginalY(BANK_Y);
+		widget.setXPositionMode(WidgetPositionMode.ABSOLUTE_LEFT);
+		widget.setYPositionMode(WidgetPositionMode.ABSOLUTE_TOP);
+		widget.revalidateScroll();
 	}
 
 	private static void changeWidgetHeight(int originalHeight, int newHeight, Widget widget)
