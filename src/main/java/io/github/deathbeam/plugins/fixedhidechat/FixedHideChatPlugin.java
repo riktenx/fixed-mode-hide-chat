@@ -12,12 +12,15 @@ import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.T
 import java.awt.event.KeyEvent;
 import java.util.*;
 import javax.inject.Inject;
+
+import com.google.inject.*;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.events.BeforeRender;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.widgets.*;
 import net.runelite.client.callback.ClientThread;
+import net.runelite.client.config.*;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.input.KeyListener;
 import net.runelite.client.input.KeyManager;
@@ -33,6 +36,9 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 {
 	@Inject
 	private Client client;
+
+	@Inject
+	private FixedHideChatConfig config;
 
 	@Inject
 	private ClientThread clientThread;
@@ -118,8 +124,13 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 			changeWidgetXY(seedVaultWidget, 6);
 		}
 
-		// Expand the view height
-		setViewSizeTo(DEFAULT_VIEW_HEIGHT, EXPANDED_VIEW_HEIGHT);
+		if (!hideChat && config.resizeViewport())
+		{
+			setViewSizeTo(EXPANDED_VIEW_HEIGHT, DEFAULT_VIEW_HEIGHT);
+		} else	{
+			// Expand the view height
+			setViewSizeTo(DEFAULT_VIEW_HEIGHT, EXPANDED_VIEW_HEIGHT);
+		}
 
 		final Widget chatboxMessages = client.getWidget(ComponentID.CHATBOX_FRAME);
 
@@ -282,5 +293,11 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 		{
 			chatboxMessages.setHidden(false);
 		}
+	}
+
+	@Provides
+	FixedHideChatConfig getConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(FixedHideChatConfig.class);
 	}
 }
