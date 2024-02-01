@@ -42,6 +42,7 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 
 	private int lastMenu = 0;
 	private boolean hideChat = true;
+	private boolean hideChatPrevious = hideChat;
 
 	@Override
 	protected void startUp() throws Exception
@@ -98,14 +99,13 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 		final Widget bankWidget = client.getWidget(ComponentID.BANK_CONTAINER);
 		if (bankWidget != null && !bankWidget.isSelfHidden())
 		{
-			// If changeBankProperties is not called before the script and the chatbox is open, then a tag tab briefly shows over the 'swap' button
-			changeBankProperties(bankWidget, BANK_X);
 			// call [clientscript,bankmain_init] because otherwise the tag tabs don't extend properly
-			Widget w = client.getWidget(ComponentID.BANK_CONTAINER);
-			if (w != null)
+			// but don't call it every frame because then performance tanks
+			// Causes a very slight flicker of the tag tab above the swap button sadly when opening the bag without the chat hidden
+			if (hideChatPrevious != hideChat)
 			{
-				client.createScriptEvent(w.getOnLoadListener())
-						.setSource(w)
+				client.createScriptEvent(bankWidget.getOnLoadListener())
+						.setSource(bankWidget)
 						.run();
 			}
 			changeBankProperties(bankWidget, BANK_X);
@@ -150,6 +150,8 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 			// Hide/show chat messages
 			chatboxMessages.setHidden(!found);
 		}
+
+		hideChatPrevious = hideChat;
 	}
 
 	@Subscribe
@@ -171,7 +173,8 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 		}
 	}
 
-	private void changeBankProperties(Widget bankWidget, int xPosition) {
+	private void changeBankProperties(Widget bankWidget, int xPosition)
+	{
 		bankWidget.setOriginalX(xPosition);
 		bankWidget.setOriginalY(BANK_Y);
 		bankWidget.setXPositionMode(WidgetPositionMode.ABSOLUTE_LEFT);
