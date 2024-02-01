@@ -184,7 +184,7 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 		}
 	}
 
-	private void changeWidgetXY(Widget widget, int xPosition)
+	private static void changeWidgetXY(Widget widget, int xPosition)
 	{
 		widget.setOriginalX(xPosition);
 		widget.setOriginalY(BANK_Y);
@@ -193,14 +193,18 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 		widget.revalidateScroll();
 	}
 
+	private static void setWidgetHeight(final Widget widget, final int height)
+    {
+			widget.setOriginalHeight(height);
+			widget.setHeightMode(WidgetSizeMode.ABSOLUTE);
+			widget.revalidateScroll();
+    }
+
 	private static void changeWidgetHeight(int originalHeight, int newHeight, Widget widget)
 	{
 		if (widget.getHeight() == originalHeight)
 		{
-			widget.setOriginalHeight(newHeight);
-			widget.setHeightMode(WidgetSizeMode.ABSOLUTE);
-			widget.revalidateScroll();
-
+			setWidgetHeight(widget, newHeight);
 			final Widget[] nestedChildren = widget.getNestedChildren();
 
 			if (nestedChildren != null)
@@ -209,9 +213,7 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 				{
 					if (nestedChild.getHeight() == originalHeight)
 					{
-						nestedChild.setOriginalHeight(newHeight);
-						nestedChild.setHeightMode(WidgetSizeMode.ABSOLUTE);
-						nestedChild.revalidateScroll();
+						setWidgetHeight(nestedChild, newHeight);
 					}
 				}
 			}
@@ -224,9 +226,7 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 				{
 					if (child.getHeight() == originalHeight)
 					{
-						child.setOriginalHeight(newHeight);
-						child.setHeightMode(WidgetSizeMode.ABSOLUTE);
-						child.revalidateScroll();
+						setWidgetHeight(child, newHeight);
 					}
 				}
 			}
@@ -251,18 +251,14 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 
 		if (viewport != null)
 		{
-			viewport.setOriginalHeight(newHeight);
-			viewport.setHeightMode(WidgetSizeMode.ABSOLUTE);
-			viewport.revalidateScroll();
+			setWidgetHeight(viewport, newHeight);
 		}
 
 		final Widget fixedMain = client.getWidget(FIXED_MAIN.getKey(), FIXED_MAIN.getValue());
 
 		if (fixedMain != null && fixedMain.getHeight() == originalHeight)
 		{
-			fixedMain.setOriginalHeight(newHeight);
-			fixedMain.setHeightMode(WidgetSizeMode.ABSOLUTE);
-			fixedMain.revalidateScroll();
+			setWidgetHeight(fixedMain, newHeight);
 
 			final Widget[] staticChildren = fixedMain.getStaticChildren();
 
