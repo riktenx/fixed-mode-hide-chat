@@ -3,6 +3,7 @@ package io.github.deathbeam.plugins.fixedhidechat;
 import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.AUTO_EXPAND_WIDGETS;
 import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.DEFAULT_VIEW_HEIGHT;
 import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.EXPANDED_VIEW_HEIGHT;
+import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.BANK_X;
 import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.BANK_Y;
 import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.DEFAULT_VIEW_WIDGET_HEIGHT;
 import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.EXPANDED_VIEW_WIDGET_HEIGHT;
@@ -95,11 +96,10 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 
 		// Bank container sometimes moves offscreen on resize and quick inputs, workaround
 		final Widget bankWidget = client.getWidget(ComponentID.BANK_CONTAINER);
-
 		if (bankWidget != null && !bankWidget.isSelfHidden())
 		{
 			// If changeBankProperties is not called before the script and the chatbox is open, then a tag tab briefly shows over the 'swap' button
-			changeBankProperties(bankWidget);
+			changeBankProperties(bankWidget, BANK_X);
 			// call [clientscript,bankmain_init] because otherwise the tag tabs don't extend properly
 			Widget w = client.getWidget(ComponentID.BANK_CONTAINER);
 			if (w != null)
@@ -108,7 +108,14 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 						.setSource(w)
 						.run();
 			}
-			changeBankProperties(bankWidget);
+			changeBankProperties(bankWidget, BANK_X);
+		}
+
+		// The seed vault container sometimes moves offscreen on resize and quick inputs, workaround
+		final Widget seedVaultWidget = client.getWidget(ComponentID.SEED_VAULT_INVENTORY_ITEM_CONTAINER);
+		if (seedVaultWidget != null && !seedVaultWidget.isSelfHidden())
+		{
+			changeBankProperties(seedVaultWidget, 6);
 		}
 
 		// Expand the view height
@@ -164,8 +171,8 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 		}
 	}
 
-	private void changeBankProperties(Widget bankWidget) {
-		bankWidget.setOriginalX(12);
+	private void changeBankProperties(Widget bankWidget, int xPosition) {
+		bankWidget.setOriginalX(xPosition);
 		bankWidget.setOriginalY(BANK_Y);
 		bankWidget.setXPositionMode(WidgetPositionMode.ABSOLUTE_LEFT);
 		bankWidget.setYPositionMode(WidgetPositionMode.ABSOLUTE_TOP);

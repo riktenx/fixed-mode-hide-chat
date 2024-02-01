@@ -45,6 +45,11 @@ public class FixedHideChatConstants
 		0
 	);
 
+	private static final Map.Entry<Integer, Integer>  FIXED_VIEWPORT_SEED_VAULT_INVENTORY_ITEM_CONTAINER = new AbstractMap.SimpleEntry<>(
+		ComponentID.SEED_VAULT_INVENTORY_ITEM_CONTAINER,
+		0
+	);
+
 	static final Map.Entry<Integer, Integer>  FIXED_MAIN = new AbstractMap.SimpleEntry<>(
 		InterfaceID.FIXED_VIEWPORT,
 		9
@@ -71,5 +76,6 @@ public class FixedHideChatConstants
 	static final Set<Map.Entry<Integer, Integer>> TO_CONTRACT_WIDGETS = ImmutableSet
 		.<Map.Entry<Integer, Integer>>builder()
 		.add(FIXED_VIEWPORT_BANK_POPUP_CONTAINER)
+		.add(FIXED_VIEWPORT_SEED_VAULT_INVENTORY_ITEM_CONTAINER)
 		.build();
 }
