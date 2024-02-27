@@ -46,6 +46,9 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 	@Inject
 	private KeyManager keyManager;
 
+	@Inject
+	private SpriteManager spriteManager;
+
 	private int lastMenu = 0;
 	private boolean hideChat = true;
 	private boolean hideChatPrevious = hideChat;
@@ -53,6 +56,7 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 	@Override
 	protected void startUp() throws Exception
 	{
+		spriteManager.addSpriteOverrides(FixedHideChatSprites.values());
 		// Register listener
 		keyManager.registerKeyListener(this);
 	}
@@ -60,6 +64,7 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 	@Override
 	protected void shutDown() throws Exception
 	{
+		spriteManager.removeSpriteOverrides(FixedHideChatSprites.values());
 		// Unregister listener
 		keyManager.unregisterKeyListener(this);
 
@@ -161,6 +166,7 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 			// Hide/show chat messages
 			chatboxMessages.setHidden(!found);
 		}
+		fixedHideChatBorders();
 
 		hideChatPrevious = hideChat;
 	}
@@ -288,6 +294,58 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 		if (chatboxMessages != null)
 		{
 			chatboxMessages.setHidden(false);
+			resetFixedHideChatBorders();
+		}
+	}
+
+	public void fixedHideChatBorders()
+	{
+		if (client.isResized())
+		{
+			resetFixedHideChatBorders();
+			return;
+		}
+
+		Widget chatboxMessages = client.getWidget(ComponentID.CHATBOX_FRAME);
+		if (chatboxMessages != null)
+		{
+			Widget chatbox = client.getWidget(ComponentID.CHATBOX_PARENT);
+			if (chatbox != null)
+			{
+				if(chatboxMessages.isHidden())
+				{
+					Widget leftBorder = chatbox.createChild(0, WidgetType.GRAPHIC);
+					leftBorder.setSpriteId(FixedHideChatSprites.FIXED_HIDE_CHAT_LEFT_BORDER.getSpriteId());
+					leftBorder.setOriginalWidth(4);
+					leftBorder.setOriginalHeight(142);
+					leftBorder.setOriginalX(0);
+					leftBorder.setOriginalY(0);
+					leftBorder.setHidden(false);
+					leftBorder.revalidate();
+
+					Widget rightBorder = chatbox.createChild(1, WidgetType.GRAPHIC);
+					rightBorder.setSpriteId(FixedHideChatSprites.FIXED_HIDE_CHAT_RIGHT_BORDER.getSpriteId());
+					rightBorder.setOriginalWidth(4);
+					rightBorder.setOriginalHeight(142);
+					rightBorder.setOriginalX(516);
+					rightBorder.setOriginalY(0);
+					rightBorder.setHidden(false);
+					rightBorder.revalidate();
+				} else
+				{
+					chatbox.deleteAllChildren();
+				}
+
+			}
+		}
+	}
+
+	public void resetFixedHideChatBorders() {
+		Widget chatbox = client.getWidget(ComponentID.CHATBOX_PARENT);
+		if (chatbox != null)
+		{
+			if(chatbox.getDynamicChildren() != null)
+				chatbox.deleteAllChildren();
 		}
 	}
 
