@@ -19,6 +19,7 @@ import net.runelite.api.Client;
 import net.runelite.api.events.BeforeRender;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.widgets.*;
+import net.runelite.client.game.SpriteManager;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.*;
 import net.runelite.client.eventbus.Subscribe;
