@@ -18,13 +18,13 @@ public interface FixedHideChatConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "hideChatToggleHotkey",
+			keyName = "hideChatHotkey",
 			name = "Hotkey",
-			description = "Hotkey used to toggle hiding the chat.<br>"
+			description = "Hotkey used to hide the chat.<br>"
 					+ "Can be a combination of keys (e.g. ctrl+L). Set the key to 'Not set' to disable this setting.",
 			position = 1
 	)
-	default Keybind hideChatToggleHotkey() {
+	default Keybind hideChatHotkey() {
 		return new Keybind(KeyEvent.VK_ESCAPE, 0);
 	}
 }
