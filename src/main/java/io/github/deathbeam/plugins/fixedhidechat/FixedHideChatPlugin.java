@@ -1,19 +1,13 @@
 package io.github.deathbeam.plugins.fixedhidechat;
 
-import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.AUTO_EXPAND_WIDGETS;
-import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.DEFAULT_VIEW_HEIGHT;
-import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.EXPANDED_VIEW_HEIGHT;
-import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.BANK_X;
-import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.BANK_Y;
-import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.DEFAULT_VIEW_WIDGET_HEIGHT;
-import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.EXPANDED_VIEW_WIDGET_HEIGHT;
-import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.FIXED_MAIN;
-import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.TO_CONTRACT_WIDGETS;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.*;
 import javax.inject.Inject;
+import javax.swing.text.AbstractDocument;
 
 import com.google.inject.*;
+import jdk.jfr.ContentType;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.events.BeforeRender;
@@ -27,6 +21,8 @@ import net.runelite.client.input.KeyListener;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+
+import static io.github.deathbeam.plugins.fixedhidechat.FixedHideChatConstants.*;
 
 @Slf4j
 @PluginDescriptor(
@@ -99,6 +95,24 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 		}
 	}
 
+	// Recursive function to traverse through widgets & children
+	private boolean isWidgetFound(Object object) {
+		if (object instanceof Widget) {
+			Widget widget = (Widget) object;
+			if (!widget.isSelfHidden()) {
+				return !widget.isHidden();
+			}
+		}
+
+		if (object instanceof Widget[]) {
+			Widget[] widgetArray = Arrays.copyOf((Widget[]) object, ((Widget[]) object).length);
+			for (Object widgetElement : widgetArray) {
+				return isWidgetFound(widgetElement);
+			}
+		}
+		return false;
+	}
+
 	@Subscribe
 	public void onBeforeRender(final BeforeRender event)
 	{
@@ -118,14 +132,14 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 			if (hideChatPrevious != hideChat)
 			{
 				client.createScriptEvent(bankWidget.getOnLoadListener())
-						.setSource(bankWidget)
-						.run();
+					.setSource(bankWidget)
+					.run();
 			}
 			changeWidgetXY(bankWidget, BANK_X);
 		}
 
 		// The seed vault container sometimes moves offscreen on resize and quick inputs, workaround
-		final Widget seedVaultWidget = client.getWidget(ComponentID.SEED_VAULT_INVENTORY_ITEM_CONTAINER);
+		final Widget seedVaultWidget = client.getWidget(41353217);
 		if (seedVaultWidget != null && !seedVaultWidget.isSelfHidden())
 		{
 			changeWidgetXY(seedVaultWidget, 6);
@@ -146,20 +160,29 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 			boolean found = !hideChat;
 
 			// Check if any auto-expand interface is open
-			if (!found)
-			{
-				for (final Map.Entry<Integer, Integer> widgets : AUTO_EXPAND_WIDGETS)
-				{
-					final Widget widget = widgets.getValue() == 0 ? client.getWidget(widgets.getKey()) : client.getWidget(widgets.getKey(), widgets.getValue());
+			if (!found) {
+				for (final Map.Entry<Integer, Integer> widgets : AUTO_EXPAND_WIDGETS) {
+					final Widget widget = client.getWidget(widgets.getKey(), widgets.getValue());
 
-					if (widget != null && !widget.isSelfHidden())
-					{
-						found = true;
-						break;
+					if (widget != null && !widget.isSelfHidden()) {
+						final Widget[] nestedChildren = widget.getNestedChildren();
+						final Widget[] staticChildren = widget.getStaticChildren();
+
+						if (staticChildren != null && staticChildren.length > 0) {
+							found = isWidgetFound(staticChildren);
+						}
+						else if (nestedChildren != null && nestedChildren.length > 0) {
+							found = isWidgetFound(nestedChildren);
+						} else {
+							found = isWidgetFound(widget);
+						}
+
+						if (found) {
+							break;
+						}
 					}
 				}
 			}
-
 			// Resize some widgets that might interfere with having expanded chat
 			setWidgetsSizeTo(
 				found ? EXPANDED_VIEW_WIDGET_HEIGHT : DEFAULT_VIEW_WIDGET_HEIGHT,
@@ -203,11 +226,11 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 	}
 
 	private static void setWidgetHeight(final Widget widget, final int height)
-    {
-			widget.setOriginalHeight(height);
-			widget.setHeightMode(WidgetSizeMode.ABSOLUTE);
-			widget.revalidateScroll();
-    }
+	{
+		widget.setOriginalHeight(height);
+		widget.setHeightMode(WidgetSizeMode.ABSOLUTE);
+		widget.revalidateScroll();
+	}
 
 	private static void changeWidgetHeight(int originalHeight, int newHeight, Widget widget)
 	{
@@ -244,7 +267,7 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 
 	private void setWidgetsSizeTo(final int originalHeight, final int newHeight)
 	{
-		for (final Map.Entry<Integer, Integer> widgets : TO_CONTRACT_WIDGETS)
+		for (final Map.Entry<Integer, Integer> widgets : TO_CONTRACT_WIDGETS) // FIXED_VIEWPORT_BANK_POPUP_CONTAINER && FIXED_VIEWPORT_SEED_VAULT_INVENTORY_ITEM_CONTAINER
 		{
 			final Widget widget = widgets.getValue() == 0 ? client.getWidget(widgets.getKey()) : client.getWidget(widgets.getKey(), widgets.getValue());
 			if (widget != null && !widget.isSelfHidden())
@@ -348,7 +371,6 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 			}
 		}
 	}
-
 	@Provides
 	FixedHideChatConfig getConfig(ConfigManager configManager)
 	{
