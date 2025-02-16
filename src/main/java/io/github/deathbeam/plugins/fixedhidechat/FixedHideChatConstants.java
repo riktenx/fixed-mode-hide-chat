@@ -34,7 +34,7 @@ public class FixedHideChatConstants
 	);
 
 	private static final Map.Entry<Integer, Integer>  FIXED_VIEWPORT_SEED_VAULT_INVENTORY_ITEM_CONTAINER = new AbstractMap.SimpleEntry<>(
-		631,
+		InterfaceID.SEED_VAULT,
 		1
 	);
 
