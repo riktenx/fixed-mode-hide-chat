@@ -1,5 +1,6 @@
 package io.github.deathbeam.plugins.fixedhidechat;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.*;
 import javax.inject.Inject;
@@ -159,8 +160,18 @@ public class FixedHideChatPlugin extends Plugin implements KeyListener
 			// Check if any auto-expand interface is open
 			if (!found) {
 				for (final Map.Entry<Integer, Integer> widgets : AUTO_EXPAND_WIDGETS) {
-					final Widget widget = client.getWidget(widgets.getKey(), widgets.getValue());
+					final Widget fairyRingSearch = client.getWidget(InterfaceID.CHATBOX, 38);
+					if (fairyRingSearch != null) {
+						Widget[] fairyRingArray = fairyRingSearch.getDynamicChildren();
+						if (fairyRingArray.length > 0) {
+							if (fairyRingArray[0] != null && fairyRingArray[0].getText().contains("fairy")) {
+								found = true;
+								break;
+							}
+						}
+					}
 
+					final Widget widget = client.getWidget(widgets.getKey(), widgets.getValue());
 					if (widget != null && !widget.isSelfHidden()) {
 						final Widget[] nestedChildren = widget.getNestedChildren();
 						final Widget[] staticChildren = widget.getStaticChildren();
