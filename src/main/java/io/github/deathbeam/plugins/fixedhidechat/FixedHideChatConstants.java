@@ -9,41 +9,23 @@ import net.runelite.api.widgets.*;
 
 public class FixedHideChatConstants
 {
-	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_DIALOG = new AbstractMap.SimpleEntry<>(
+	// 'Rub' option (S219.0) Duel rings, Slayer Rings, Burning Amulets, etc.
+	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_DIALOG_OPTION = new AbstractMap.SimpleEntry<>(
 		InterfaceID.DIALOG_OPTION,
-		1
+		0
 	);
 
-	// Wrong PIN popup, idk what else; S162.565 (ID: 10617397)
+	// A lot of other stuff, we recurse through this, it should catch any messages under (S162.566 ID: 10617398)
+	// Wrong PIN popup, Gauntlet Exit Prompt (S229.0 ID: 15007745), NPC Dialog (N231.0 ID: 5138816), Make-X (N270.0 ID: 17694720)... etc.
 	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_SPECIAL = new AbstractMap.SimpleEntry<>(
 		InterfaceID.CHATBOX,
-		565
+		566
 	);
 
-	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_DIALOG_SPRITE = new AbstractMap.SimpleEntry<>(
-		InterfaceID.DIALOG_SPRITE,
-		2
-	);
-
-	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_DIALOG_NPC = new AbstractMap.SimpleEntry<>(
-		InterfaceID.DIALOG_NPC,
-		2
-	);
-
-	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_DIALOG_PLAYER = new AbstractMap.SimpleEntry<>(
-		InterfaceID.DIALOG_PLAYER,
-		0
-	);
-
-	// Fix for 'Contract' from Jane in Farming Guild
-	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_DIALOG_PLAYER_1 = new AbstractMap.SimpleEntry<>(
-		InterfaceID.DIALOG_PLAYER,
-		1
-	);
-
+	// Bank Search Container
 	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_CONTAINER = new AbstractMap.SimpleEntry<>(
-		ComponentID.CHATBOX_CONTAINER,
-		0
+		InterfaceID.CHATBOX,
+		42
 	);
 
 	private static final Map.Entry<Integer, Integer>  FIXED_VIEWPORT_BANK_POPUP_CONTAINER = new AbstractMap.SimpleEntry<>(
@@ -52,19 +34,13 @@ public class FixedHideChatConstants
 	);
 
 	private static final Map.Entry<Integer, Integer>  FIXED_VIEWPORT_SEED_VAULT_INVENTORY_ITEM_CONTAINER = new AbstractMap.SimpleEntry<>(
-		ComponentID.SEED_VAULT_INVENTORY_ITEM_CONTAINER,
-		0
+		InterfaceID.SEED_VAULT,
+		1
 	);
 
 	static final Map.Entry<Integer, Integer>  FIXED_MAIN = new AbstractMap.SimpleEntry<>(
 		InterfaceID.FIXED_VIEWPORT,
 		9
-	);
-
-	// Cannot find a suitable constant for 270, this is for "Making" interfaces (glassblowing, potion making, smelting)
-	private static final Map.Entry<Integer, Integer>  CHATBOX_MESSAGES_MAKE_X = new AbstractMap.SimpleEntry<>(
-		270,
-		1
 	);
 
 	static final int DEFAULT_VIEW_HEIGHT = 334;
@@ -77,14 +53,9 @@ public class FixedHideChatConstants
 
 	static final Set<Map.Entry<Integer, Integer>> AUTO_EXPAND_WIDGETS = ImmutableSet
 		.<Map.Entry<Integer, Integer>>builder()
-		.add(CHATBOX_MESSAGES_DIALOG)
-		.add(CHATBOX_MESSAGES_SPECIAL)
+		.add(CHATBOX_MESSAGES_DIALOG_OPTION)
 		.add(CHATBOX_MESSAGES_CONTAINER)
-		.add(CHATBOX_MESSAGES_DIALOG_NPC)
-		.add(CHATBOX_MESSAGES_DIALOG_PLAYER)
-		.add(CHATBOX_MESSAGES_DIALOG_SPRITE)
-		.add(CHATBOX_MESSAGES_MAKE_X)
-		.add(CHATBOX_MESSAGES_DIALOG_PLAYER_1)
+		.add(CHATBOX_MESSAGES_SPECIAL)
 		.build();
 
 	static final Set<Map.Entry<Integer, Integer>> TO_CONTRACT_WIDGETS = ImmutableSet
